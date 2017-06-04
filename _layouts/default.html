@@ -3,7 +3,12 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="chrome=1">
-	<title>Slals blog</title>
+	<meta name="description" content="{{ site.description }}">
+	<link rel="icon" type="image/png" href="{{ site.url }}/assets/favicon.png">
+	<title>{{ site.title }}</title>
+	<script src="https://use.fontawesome.com/7fdcb125d7.js"></script>
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Average|Donegal+One|Ovo">
+	<link ref="stylesheet" href="https://use.fontawesome.com/7fdcb125d7.css" media="all">
 	<link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
 	<meta name="viewport" content="width=device-width">
   <!--[if lt IE 9]>
@@ -13,24 +18,16 @@
 <body>
 	<div class="wrapper">
     <header>
-      <h1>{{ site.title | default: site.github.repository_name }}</h1>
-    	<p>{{ site.description | default: site.github.project_tagline }}</p>
-
-			{% if site.github.is_project_page %}
-    	<p class="view"><a href="{{ site.github.repository_url }}">View the Project on GitHub <small>{{ github_name }}</small></a></p>
-      {% endif %}
-
-      {% if site.github.is_user_page %}
-      <p class="view"><a href="{{ site.github.owner_url }}">View My GitHub Profile</a></p>
-      {% endif %}
-
-    	{% if site.show_downloads %}
-      <ul>
-        <li><a href="{{ site.github.zip_url }}">Download <strong>ZIP File</strong></a></li>
-        <li><a href="{{ site.github.tar_url }}">Download <strong>TAR Ball</strong></a></li>
-        <li><a href="{{ site.github.repository_url }}">View On <strong>GitHub</strong></a></li>
-      </ul>
-      {% endif %}
+			<div id="logo">
+				<a href="{{ site.url }}" ><img src="{{ site.url }}/assets/favicon.png" /></a>
+			</div>
+			<p id="headline">
+				<i>A journey into the web...</i>
+			</p>
+			{% for cat in site.categories %}
+			{% capture cat_name %}{{ cat | first }}{% endcapture %}
+			{{ cat_name }}
+			{% endfor %}
     </header>
     <section>
 			{% for post in site.posts %}
@@ -39,10 +36,15 @@
 			{% endfor %}
     </section>
     <footer>
-      {% if site.github.is_project_page %}
-      <p>This project is maintained by <a href="{{ site.github.owner_url }}">{{ site.github.owner_name }}</a></p>
-      {% endif %}
-      <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+			<hr />
+			<p id="icons">
+				<a href="http://slals.io" target="_blank" rel="external" title="About Slals"><i class="customi-slals customi-3x calibrator"></i></a>
+				<a href="https://www.wooble.io" target="_blank" rel="external" title="See Wooble"><i class="customi-wooble customi-3x calibrator"></i></a>
+				<a href="https://twitter.com/opt_Slals" target="_blank" rel="external" title="See Slals Twitter"><i class="fa fa-twitter-square fa-3x"></i></a>
+				<a href="https://github.com/Slaals" target="_blank" rel="external" title="See Slals projects"><i class="fa fa-github-square fa-3x"></i></a>
+			</p>
+      <p>This blog is maintained by <a href="http://slals.io" target="_blank">{{ site.github.owner_name }}</a></p>
+      <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist" target="_blank">orderedlist</a></small></p>
 		</footer>
 	</div>
   <script src="{{ '/assets/js/scale.fix.js' | relative_url }}"></script>
