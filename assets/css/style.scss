@@ -3,6 +3,23 @@
 
 @import "{{ site.theme }}";
 
+section {
+  width: 565px;
+}
+
+figure {
+  margin-left: -15px;
+  width: calc(100% + 35px);
+}
+
+p {
+  font-size: 1.1em;
+  line-height: 25px;
+  figure {
+    display: inline;
+  }
+}
+
 @font-face {
   font-family: "customi";
   src:url("https://file.myfontastic.com/HHxcPP7WJ3Qd7TSAEu8MEQ/fonts/1472248312.eot");

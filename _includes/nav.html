@@ -1,0 +1,12 @@
+<header>
+  <div id="logo">
+    <a href="{{ site.url }}" ><img src="{{ site.url }}/assets/favicon.png" /></a>
+  </div>
+  <p id="headline">
+    <i>A journey into the web...</i>
+  </p>
+  {% for cat in site.categories %}
+  {% capture cat_name %}{{ cat | first }}{% endcapture %}
+  {{ cat_name }}
+  {% endfor %}
+</header>
