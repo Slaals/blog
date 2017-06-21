@@ -4,7 +4,10 @@
 @import "{{ site.theme }}";
 
 section {
-  width: 565px;
+  width: 680px;
+}
+.wrapper {
+  width: 1000px;
 }
 
 figure {
@@ -110,7 +113,7 @@ footer {
         color: #1DA1F2;
       }
       .customi-wooble {
-        color: #C32477;
+        color: #FB9ECE;
       }
       .customi-slals {
         color: darken(#58E78B, 20%);

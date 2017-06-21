@@ -1,0 +1,284 @@
+---
+title: Angular2, a rest client interface
+description: This article is about making an Angular2 interface that manages http requests. The solutions uses a library called ng2-resource-rest by troyanskyi.
+layout: post
+category: Programming
+---
+
+<p>
+  Today I wanted to make a REST client interface for my project. I looked first on the Internet but surprisingly I didn't find anything good enough. I'll explain what I made, but first, what is the goal of this "interface".
+</p>
+
+<h2>Goal</h2>
+<p>
+  To sum up the goal in one sentence it would be : having a layer for http requests. With that said, the point is to have something that adds headers, manage request methods, gets the response and parses it without writing it again and again through angular services.
+</p>
+
+<h2>Requirement</h2>
+<p>
+  First, I use a library that follows CRUD rules (which is not needed for this solution) and is up to date, "toyanskiy/ng2-resource-rest":https://github.com/troyanskiy/ng2-resource-rest
+</p>
+
+{% highlight ruby %}
+npm install --save ng2-resource-rest
+{% endhighlight %}
+
+<p>
+  Angular version @2.4.0@ and later
+</p>
+
+<p>
+  I assume you have an angular2 project already setup, I'll only details how to make the REST interface, and how to use it.
+</p>
+
+<h2>Let's get started</h2>
+<p>
+  Let's create a file, I named it @rest-client.ts@ and I put it in a folder called @app/shared@ (it depends on your design choice, but @rest-client@ must be global). Here is the code in @rest-client.ts@
+</p>
+
+{% highlight ts %}
+// app/shared/rest-client.ts
+
+import {Resource} from 'ng2-resource-rest';
+
+export class RestClient extends Resource {
+
+}
+{% endhighlight %}
+
+<p>
+  This class will be our REST interface. It extends @Resource@ which is the @ng2-resource-rest@ class that has access to request properties such as headers and URL.
+</p>
+
+<p>
+  Now let's take a look at an angular service which uses our @RestClient@, for this example we will make an angular service to manage books, the file name would look something like @book.service.ts@
+</p>
+
+{% highlight ts %}
+// app/books/book.service.ts
+import {Injectable} from '@angular/core';
+import {RequestMethod} from '@angular/http';
+
+import {ResourceAction, ResourceMethod, ResourceParams} from 'ng2-resource-rest';
+import {RestClient} from '../shared/rest-client';
+
+interface IQueryInput {
+  page?: number;
+  perPage?: number;
+  dateFrom?: string;
+  dateTo?: string;
+  isRead?: string;
+}
+
+interface IBookShort {
+  id?: number;
+  cover?: string;
+  title: string;
+  author: string;
+}
+
+interface IBook extends IBookShort {
+  summary?: string;
+  publishedDate?: Date;
+}
+
+@Injectable()
+@ResourceParams({
+  url: '/books'
+})
+export class BookService extends RestClient {
+
+  @ResourceAction({
+    isArray: true,
+    path: '/'
+  })
+  getBooks: ResourceMethod<IQueryInput, IBookShort[]>;
+
+  @ResourceAction({
+    path: '/{!id}'
+  })
+  getBook: ResourceMethod<{id: any}, IBook>;
+
+  @ResourceAction({
+    method: RequestMethod.Post
+  })
+  saveBook: ResourceMethod<IBook, any>;
+
+  @ResourceAction({
+    method: RequestMethod.Put,
+    path: '/{!id}'
+  })
+  updateBook: ResourceMethod<IBook, any>;
+
+  @ResourceAction({
+    method: RequestMethod.Delete,
+    path: '/{!id}'
+  })
+  deleteBook: ResourceMethod<{id: any}, any>;
+}
+{% endhighlight %}
+
+<p>
+  @ResourceMethod@ is an interface from @ng2-resource-rest@. The method generics are respectively request body and response body. Note that the service extends @RestClient@, it is mandatory.
+</p>
+
+<p>
+  Here is an example about how to consume the service above
+</p>
+
+{% highlight ts %}
+class BookComponent {
+
+  constructor(private _bookService: BookService) { }
+
+  doSmth() {
+    // GET http://.../books?page=2&perPage=10
+    let books: IBookShort[] = this._bookService.getBooks({page: 2, perPage: 10});
+
+    // GET http://.../books/42
+    let book: IBook = this._bookService.getBook({id: 42});
+
+    // Since getBook({id: 42}) returns an asynchronous response (so does every requests)
+    // We must use the observable to successfully update and then delete the book
+    // from the response
+    book.$observable
+       .toPromise()
+       .then(() => {
+         book.title = 'Ainsi parlait Zarathoustra';
+
+         // PUT http://.../books/42
+         return this._bookService.updateBook(book).$observable.toPromise();
+       })
+      .then(() => {
+        // DELETE http://.../books/42
+        return this._bootService.deleteBook(book).$observable.toPromise();
+      });
+
+    let newBook: IBook = {
+      title: 'The call of the Cthulhu',
+      author: 'H. P. Lovecraft'
+    }
+
+    // POST http://.../books
+    this._bookService.saveBook(newBook);
+  }
+}
+{% endhighlight %}
+
+<p>
+  Here, I mostly copied the documentation from @ng2-resource-rest@ "github page":https://github.com/troyanskiy/ng2-resource-rest/blob/master/README.md.
+</p>
+
+<p>
+  Notice that I didn't put the full URL in the comments, it's because right now the service @BookService@ don't have the URL, I just put @'/books'@. I could have put the entire URL in the decorator @ResourceParams@, but it would have mean that I had to put the URL for each service I create. To avoid this, let's come back to @RestClient@, we will override one method from @Resource@
+</p>
+
+{% highlight ts %}
+export class RestClient extends Resource {
+
+  getUrl(methodOptions?: any): string | Promise<string> {
+    let resPath = super.getUrl();
+    return 'http://myurl.com/api' + resPath;
+  }
+
+}
+{% endhighlight %}
+
+<p>
+  That's it. @getUrl@ is a method from @Resource@ and it is used by the decorator @ResourceAction@. The method now get the URL we put, it is @'/books'@ and concatenates this with the full URL. Now it does that for every service that extends @RestClient@.
+</p>
+
+<p>
+  The second thing I wanted to have is a global header for every service, for JWT authentication for example. Here is how I did this
+</p>
+
+{% highlight ts %}
+export class RestClient extends Resource {
+
+  getHeaders(methodOptions?: any): any {
+    let headers: any = {};
+
+    if (methodOptions.auth) {
+      headers.Authorization = localStorage.get('token');
+    }
+
+    return headers;
+  }
+
+  getUrl(methodOptions?: any): string | Promise<string> {
+    let resPath = super.getUrl();
+    return 'http://myurl.com/api' + resPath;
+  }
+
+  responseInterceptor(observable: Observable<any>, request?: Request): Observable<any> {
+
+    return Observable.create((subscriber: Subscriber<any>) => {
+
+      observable.subscribe(
+        (res: Response) => {
+          if (res.headers) {
+            let newToken: string = res.headers.get('Authorization');
+            if (newToken) {
+              localStorage.setItem('token', newToken);
+            }
+          }
+          subscriber.next((<any>res)._body ? res.json().data : null);
+        },
+        (error: Response) => {
+          // I also made a layer to parse errors
+          subscriber.error(new Error(error));
+        },
+        () => subscriber.complete()
+      );
+
+    });
+  }
+}
+{% endhighlight %}
+
+<p>
+  I added two things. First @getHeaders@, it's exactly the same behavior than @getUrl@ we saw earlier. For every service it will get the token from @localStorage@ and put it in the @Authorization@ header.
+</p>
+
+<p>
+  To make the auth works, you should specify the param @auth@ when a resource requires an authentication. Let's say a user have to be authenticated when he wants a list of books, the resource method should look like the following
+</p>
+
+{% highlight ts %}
+// book.service.ts
+
+  @ResourceAction({
+    isArray: true,
+    path: '/',
+    auth: true // It'll put the Authorization headers
+  })
+  getBooks: ResourceMethod<IQueryInput, IBookShort[]>;
+{% endhighlight %}
+
+<p>
+  The second new method is @responseInterceptor@ which overrides the method from @Resource@ (remember, @RestClient@ extends @Resource@). @responseInterceptor@ allows us to catch the request response before sending it to the service which made the request. By doing this, we can parse the body, checks values, find a header entry, and so on. In the example above, I used this method to get the header in order to automatically refresh the JWToken.
+</p>
+
+<p>
+  Last thing but no least, or nothing will work. Import the resource module in your app module such as
+</p>
+
+{% highlight ts %}
+import {ResourceModule} from 'ng2-resource-rest';
+
+@NgModule({
+  imports: [
+    ResourceModule.forRoot()
+  ]
+})
+export class AppModule {}
+{% endhighlight %}
+
+<h2>Conclusion</h2>
+<p>
+  I hope this solution is simple enough and easy to use. Bear in mind this solution is only about communication between client and server. You should consider routing within the app which is independent from services.
+</p>
+
+<p>
+  By the way, if you come up with something better, let me know, you can find my project where I implemented this solution "here":https://github.com/woobleio/wooble/tree/dev.
+</p>
