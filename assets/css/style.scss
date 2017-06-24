@@ -5,17 +5,46 @@
 
 section {
   width: 680px;
+  &.posts-list {
+    h1 {
+      margin-bottom: 8px;
+    }
+    p {
+      font-size: 1em;
+    }
+  }
 }
 .wrapper {
   width: 1000px;
 }
 
 figure {
+  text-align: center;
   margin-left: -15px;
   width: calc(100% + 35px);
+  figcaption {
+    font-size: 0.9em;
+    font-style: italic;
+  }
 }
 
-p {
+.video-container {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%;
+  margin-bottom: 25px;
+  .video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+p, ul li {
+  font-family: "Ovo", serif;
   font-size: 1.1em;
   line-height: 25px;
   figure {
@@ -35,6 +64,36 @@ p {
 }
 
 $color-link: #FF0D40;
+header li:first-child a {
+  border-radius: 3px;
+}
+nav ul,
+header ul {
+  border: none;
+  background-color: transparent;
+  li, li + li + li {
+    float: none;
+    border: none;
+    width: 90%;
+    a {
+      font-size: 1.1em;
+      float: right;
+      line-height: 25px;
+      padding-right: 25px;
+      padding-left: 25px;
+      border-radius: 3px;
+      border-right: 5px solid transparent;
+    }
+    a.active {
+      border-right: 5px solid $color-link;
+      color: $color-link;
+      font-weight: bold;
+    }
+    a:hover, a:focus {
+      border-right: 5px solid #eee;
+    }
+  }
+}
 
 [data-icon]:before {
   font-family: "customi" !important;
@@ -122,8 +181,16 @@ footer {
   }
 }
 
-h1, p, small {
+h1, h2, h3, h4, p, small {
   font-family: "Ovo", serif;
+}
+h1, h2, h3, h4 {
+  margin-top: 40px;
+  margin-bottom: 12px;
+}
+
+.content {
+  margin-bottom: 60px;
 }
 
 #logo {

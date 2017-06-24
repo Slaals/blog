@@ -5,8 +5,18 @@
   <p id="headline">
     <i>A journey into the web...</i>
   </p>
-  {% for cat in site.categories %}
-  {% capture cat_name %}{{ cat | first }}{% endcapture %}
-  {{ cat_name }}
-  {% endfor %}
+  <nav>
+    <ul>
+      {% for cat in site.categories %}
+      {% capture cat_name %}{{ cat | first }}{% endcapture %}
+      <li>
+        {% if cat_name == include.nav %}
+        <a href="{{ site.url }}/categories/{{ cat_name }}" class="active">{{ cat_name }}</a>
+        {% else %}
+        <a href="{{ site.url }}/categories/{{ cat_name }}">{{ cat_name }}</a>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+  </nav>
 </header>
