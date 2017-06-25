@@ -11,9 +11,9 @@
       {% capture cat_name %}{{ cat | first }}{% endcapture %}
       <li>
         {% if cat_name == include.nav %}
-        <a href="{{ site.url }}/categories/{{ cat_name }}" class="active">{{ cat_name }}</a>
+        <a href="{{ site.url }}/categories/{{ cat_name | downcase }}" class="active">{{ cat_name }}</a>
         {% else %}
-        <a href="{{ site.url }}/categories/{{ cat_name }}">{{ cat_name }}</a>
+        <a href="{{ site.url }}/categories/{{ cat_name | downcase }}">{{ cat_name }}</a>
         {% endif %}
       </li>
       {% endfor %}
