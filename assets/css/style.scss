@@ -37,6 +37,11 @@ figure {
   }
 }
 
+body {
+  margin-top: 0;
+  padding-top: 0
+}
+
 .video-container {
   position: relative;
   width: 100%;
@@ -100,7 +105,7 @@ header ul {
       font-weight: bold;
     }
     a:hover, a:focus {
-      border-right: 5px solid #eee;
+      color: black;
       border-bottom: none;
     }
   }
@@ -157,8 +162,9 @@ a:hover {
 }
 
 header {
-  height: 90%;
-  border-right: 1px dotted #999;
+  height: 100%;
+  padding-top: 50px;
+  border-right: 1px solid #eee;
   a {
     border: none;
     color: black;
@@ -166,6 +172,9 @@ header {
 }
 
 footer {
+  .dash {
+    display: none;
+  }
   hr {
     padding: 0 5px;
     margin: 0 auto;
@@ -173,9 +182,14 @@ footer {
     display: block;
     width: 80%;
   }
+  .info {
+    text-align: right;
+    width: 90%;
+    margin-bottom: 0;
+  }
   p#icons a {
     border: none;
-    color: black;
+    color: #bbb;
     &:hover {
       .fa-github-square {
         color: #800080;
@@ -233,4 +247,47 @@ h1, h2, h3, h4 {
 
 .customi-3x {
   font-size: 2.5em;
+}
+
+@media all and (max-width: 960px) {
+  footer {
+    width: 680px;
+    hr {
+      display: none !important;
+    }
+    .info {
+      display: inline-block;
+      width: auto;
+    }
+    .dash {
+      display: inline;
+    }
+  }
+  header {
+    width: 100%;
+    border: none;
+    padding-right: 0;
+    ul {
+      position: relative !important;
+      right: 0;
+      top: 0;
+      width: 680px;
+      margin: 0;
+      text-align: center;
+      li, li + li + li {
+        display: inline-block;
+        float: none;
+        width: auto;
+      }
+      li a, li + li + li a {
+        border-bottom: 5px solid transparent;
+        border-right: none;
+        border-radius: 3px !important;
+      }
+      li a.active, li + li + li a.active {
+        border-bottom: 5px solid $color-link;
+        border-right: none;
+      }
+    }
+  }
 }
