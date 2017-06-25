@@ -16,7 +16,7 @@ category: Programming
 
 <h2>Requirement</h2>
 <p>
-  First, I use a library that follows CRUD rules (which is not needed for this solution) and is up to date, "toyanskiy/ng2-resource-rest":https://github.com/troyanskiy/ng2-resource-rest
+  First, I use a library that follows CRUD rules (which is not needed for this solution) and is up to date, <a href="https://github.com/troyanskiy/ng2-resource-rest">toyanskiy/ng2-resource-rest</a>
 </p>
 
 {% highlight ruby %}
@@ -24,7 +24,7 @@ npm install --save ng2-resource-rest
 {% endhighlight %}
 
 <p>
-  Angular version @2.4.0@ and later
+  Angular version 2.4.0 and later
 </p>
 
 <p>
@@ -33,7 +33,7 @@ npm install --save ng2-resource-rest
 
 <h2>Let's get started</h2>
 <p>
-  Let's create a file, I named it @rest-client.ts@ and I put it in a folder called @app/shared@ (it depends on your design choice, but @rest-client@ must be global). Here is the code in @rest-client.ts@
+  Let's create a file, I named it rest-client.ts and I put it in a folder called app/shared (it depends on your design choice, but rest-client must be global). Here is the code in rest-client.ts
 </p>
 
 {% highlight ts %}
@@ -47,11 +47,11 @@ export class RestClient extends Resource {
 {% endhighlight %}
 
 <p>
-  This class will be our REST interface. It extends @Resource@ which is the @ng2-resource-rest@ class that has access to request properties such as headers and URL.
+  This class will be our REST interface. It extends Resource which is the ng2-resource-rest class that has access to request properties such as headers and URL.
 </p>
 
 <p>
-  Now let's take a look at an angular service which uses our @RestClient@, for this example we will make an angular service to manage books, the file name would look something like @book.service.ts@
+  Now let's take a look at an angular service which uses our RestClient, for this example we will make an angular service to manage books, the file name would look something like book.service.ts
 </p>
 
 {% highlight ts %}
@@ -119,7 +119,7 @@ export class BookService extends RestClient {
 {% endhighlight %}
 
 <p>
-  @ResourceMethod@ is an interface from @ng2-resource-rest@. The method generics are respectively request body and response body. Note that the service extends @RestClient@, it is mandatory.
+  ResourceMethod is an interface from ng2-resource-rest. The method generics are respectively request body and response body. Note that the service extends RestClient, it is mandatory.
 </p>
 
 <p>
@@ -166,11 +166,11 @@ class BookComponent {
 {% endhighlight %}
 
 <p>
-  Here, I mostly copied the documentation from @ng2-resource-rest@ "github page":https://github.com/troyanskiy/ng2-resource-rest/blob/master/README.md.
+  Here, I mostly copied the documentation from ng2-resource-rest <a href="https://github.com/troyanskiy/ng2-resource-rest/blob/master/README.md">github page</a>.
 </p>
 
 <p>
-  Notice that I didn't put the full URL in the comments, it's because right now the service @BookService@ don't have the URL, I just put @'/books'@. I could have put the entire URL in the decorator @ResourceParams@, but it would have mean that I had to put the URL for each service I create. To avoid this, let's come back to @RestClient@, we will override one method from @Resource@
+  Notice that I didn't put the full URL in the comments, it's because right now the service BookService don't have the URL, I just put '/books'. I could have put the entire URL in the decorator ResourceParams, but it would have mean that I had to put the URL for each service I create. To avoid this, let's come back to RestClient, we will override one method from Resource
 </p>
 
 {% highlight ts %}
@@ -185,7 +185,7 @@ export class RestClient extends Resource {
 {% endhighlight %}
 
 <p>
-  That's it. @getUrl@ is a method from @Resource@ and it is used by the decorator @ResourceAction@. The method now get the URL we put, it is @'/books'@ and concatenates this with the full URL. Now it does that for every service that extends @RestClient@.
+  That's it. getUrl is a method from Resource and it is used by the decorator ResourceAction. The method now get the URL we put, it is '/books' and concatenates this with the full URL. Now it does that for every service that extends RestClient.
 </p>
 
 <p>
@@ -237,11 +237,11 @@ export class RestClient extends Resource {
 {% endhighlight %}
 
 <p>
-  I added two things. First @getHeaders@, it's exactly the same behavior than @getUrl@ we saw earlier. For every service it will get the token from @localStorage@ and put it in the @Authorization@ header.
+  I added two things. First getHeaders, it's exactly the same behavior than getUrl we saw earlier. For every service it will get the token from localStorage and put it in the Authorization header.
 </p>
 
 <p>
-  To make the auth works, you should specify the param @auth@ when a resource requires an authentication. Let's say a user have to be authenticated when he wants a list of books, the resource method should look like the following
+  To make the auth works, you should specify the param auth when a resource requires an authentication. Let's say a user have to be authenticated when he wants a list of books, the resource method should look like the following
 </p>
 
 {% highlight ts %}
@@ -256,7 +256,7 @@ export class RestClient extends Resource {
 {% endhighlight %}
 
 <p>
-  The second new method is @responseInterceptor@ which overrides the method from @Resource@ (remember, @RestClient@ extends @Resource@). @responseInterceptor@ allows us to catch the request response before sending it to the service which made the request. By doing this, we can parse the body, checks values, find a header entry, and so on. In the example above, I used this method to get the header in order to automatically refresh the JWToken.
+  The second new method is responseInterceptor which overrides the method from Resource (remember, RestClient extends Resource). responseInterceptor allows us to catch the request response before sending it to the service which made the request. By doing this, we can parse the body, checks values, find a header entry, and so on. In the example above, I used this method to get the header in order to automatically refresh the JWToken.
 </p>
 
 <p>
@@ -280,5 +280,5 @@ export class AppModule {}
 </p>
 
 <p>
-  By the way, if you come up with something better, let me know, you can find my project where I implemented this solution "here":https://github.com/woobleio/wooble/tree/dev.
+  By the way, if you come up with something better, let me know.
 </p>

@@ -18,10 +18,19 @@ section {
   width: 1000px;
 }
 
+.footnote {
+  font-style: italic;
+  font-size: 0.9em;
+  margin-bottom: 5px;
+}
+
 figure {
   text-align: center;
   margin-left: -15px;
   width: calc(100% + 35px);
+  &.highlight {
+    text-align: left;
+  }
   figcaption {
     font-size: 0.9em;
     font-style: italic;
@@ -83,6 +92,7 @@ header ul {
       padding-left: 25px;
       border-radius: 3px;
       border-right: 5px solid transparent;
+      border-bottom: none;
     }
     a.active {
       border-right: 5px solid $color-link;
@@ -91,6 +101,7 @@ header ul {
     }
     a:hover, a:focus {
       border-right: 5px solid #eee;
+      border-bottom: none;
     }
   }
 }
@@ -140,8 +151,9 @@ a {
 }
 
 a:hover {
-  color: lighten($color-link, 15%);
-  border-bottom-color: lighten($color-link, 15%);
+  color: lighten($color-link, 20%);
+  border-bottom-color: lighten($color-link, 20%);
+  border-bottom-style: solid;
 }
 
 header {
@@ -181,6 +193,12 @@ footer {
   }
 }
 
+h1 {
+  font-size: 3em;
+}
+h1.title {
+  font-size: 2em;
+}
 h1, h2, h3, h4, p, small {
   font-family: "Ovo", serif;
 }
@@ -196,6 +214,12 @@ h1, h2, h3, h4 {
 #logo {
   width: 100%;
   text-align: center;
+  a {
+    border: none;
+    &:hover {
+      border: none;
+    }
+  }
   img {
     width: 95px;
   }

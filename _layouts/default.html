@@ -12,7 +12,7 @@
 			{% for post in site.posts %}
 				{% if page.category %}
 					{% if page.category and page.category == post.category %}
-						<h1><a href="{{ post.url }}">{{ post.title }}</a></h1>
+						<h1 class="title"><a href="{{ post.url }}">{{ post.title }}</a></h1>
 						<p>
 							{{ post.description }}
 						</p>
@@ -20,7 +20,7 @@
 						<br />
 					{% endif %}
 				{% else %}
-					<h1><a href="{{ post.url }}">{{ post.title }}</a></h1>
+					<h1 class="title"><a href="{{ post.url }}">{{ post.title }}</a></h1>
 					<p>
 						{{ post.description }}
 					</p>

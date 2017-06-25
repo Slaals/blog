@@ -6,22 +6,22 @@ category: Programming
 ---
 
 <p>
-  It happens, rarely, you have correctly configured your container, everything runs smoothly, no error logs... But your volume hasn't been mounted. Even docker inpect doesn't tell you much about your issue. It could be because of how your hard disk(s) is/are setup : your system is on the partition @c:@ while the volume you want to mount is on another partition.
+  It happens, rarely, you have correctly configured your container, everything runs smoothly, no error logs... But your volume hasn't been mounted. Even docker inpect doesn't tell you much about your issue. It could be because of how your hard disk(s) is/are setup : your system is on the partition c: while the volume you want to mount is on another partition.
 </p>
 
 <p>
-  Here you will read about a workaround to setup docker with another partition. Since Docker has been updated since, please be aware that @windows 7@,  @docker 1.11.1@ and @virtual box 5.0.20@ are required, otherwise I can't insure you the following workaround will solve your volume mounting issue.
+  Here you will read about a workaround to setup docker with another partition. Since Docker has been updated since, please be aware that windows 7,  docker 1.11.1 and virtual box 5.0.20 are required, otherwise I can't insure you the following workaround will solve your volume mounting issue.
 </p>
 
 <h2>About the issue</h2>
 <p>
-  When you intall Docker with Virtual Box (VB), by default Docker installation will share your system partition — @c:@ in most case — with docker's virtual machine. The shared folder allows docker's virtual machine boot2docker to mount volumes from your system partition.
+  When you intall Docker with Virtual Box (VB), by default Docker installation will share your system partition — c: in most case — with docker's virtual machine. The shared folder allows docker's virtual machine boot2docker to mount volumes from your system partition.
 </p>
 
 {% include image.html name="docker_example.png" caption="c:\Users mounted in docker's virtual machine" %}
 
 <p>
-  A problem arises when you try to mount anything that is not in your system partition : the volume is missing from docker's virtual machine because it only shares with your system partition — actually it shares @c:\Users@ folder by default.
+  A problem arises when you try to mount anything that is not in your system partition : the volume is missing from docker's virtual machine because it only shares with your system partition — actually it shares c:\Users folder by default.
 </p>
 
 <h2>Workaround</h2>
@@ -29,7 +29,7 @@ category: Programming
 <h3>Configure Virtual Box to share your volume</h3>
 
 <p>
-  The first step is to share your project folder you want to mount with a container. To do this, you have to open VB. Lets assume we want to mount @e:\Users\me\project\awe-stuff@. Now that VB is opened, you can see docker's machine which is by default called... Well... @default@. Right click on the machine, go to @settings@, then in the left nav bar find @Shared Folders@. This is here where you have to tell the machine what is your project path. On the right you can see a folder icon with a green plus sign, click on this icon. It opens the following dialog.
+  The first step is to share your project folder you want to mount with a container. To do this, you have to open VB. Lets assume we want to mount e:\Users\me\project\awe-stuff. Now that VB is opened, you can see docker's machine which is by default called... Well... default. Right click on the machine, go to settings, then in the left nav bar find Shared Folders. This is here where you have to tell the machine what is your project path. On the right you can see a folder icon with a green plus sign, click on this icon. It opens the following dialog.
 </p>
 
 {% include image.html name="add_share.png" %}
@@ -57,7 +57,7 @@ category: Programming
 
 <h3>Configure boot2docker</h3>
 <p>
-  Open docker's terminal or your favorite terminal, @docker-machine@ should be installed. Follow the instructions below.
+  Open docker's terminal or your favorite terminal, docker-machine should be installed. Follow the instructions below.
 </p>
 
 {% highlight shell %}
@@ -72,13 +72,13 @@ docker-machine restart default
 {% endhighlight %}
 
 <p>
-  The file @bootlocal.sh@ is a script that will mount the shared folder you setup via VB — @awe-stuff@ in my case.
+  The file bootlocal.sh is a script that will mount the shared folder you setup via VB — awe-stuff in my case.
 </p>
 
 <h3>That's it</h3>
 
 <p>
-  Everytime you will run docker, it'll mount the shared folder which points to your project folder. Now, to mount this to a container, when you setup the volume configuration you have to specify @/var/awe-stuff@ or @/var/&lt;project name you shared and mounted in docker's machine&gt;@.
+  Everytime you will run docker, it'll mount the shared folder which points to your project folder. Now, to mount this to a container, when you setup the volume configuration you have to specify /var/awe-stuff or /var/&lt;project name you shared and mounted in docker's machine&gt;.
 </p>
 
 <p>
