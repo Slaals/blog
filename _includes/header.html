@@ -2,6 +2,16 @@
 <meta http-equiv="X-UA-Compatible" content="chrome=1">
 <link rel="icon" type="image/png" href="{{ site.url }}/assets/favicon.png">
 <script src="https://use.fontawesome.com/7fdcb125d7.js"></script>
+<meta property="og:url" content="{{ site.url }}{{ page.url }}" />
+<meta property="og:title" content="{{ page.title }}" />
+<meta property="og:description" content="{{ page.description }}" />
+<meta property="og:image" content="{{ page.thumbnail }}" />
+<meta property="fb:app_id" content="1890521294549755" />
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@optSlals">
+<meta name="twitter:title" content="{{ page.title }}">
+<meta name="twitter:description" content="{{ page.description }}">
+<meta name="twitter:image" content="{{ page.thumbnail }}">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Average|Donegal+One|Ovo">
 <link ref="stylesheet" href="https://use.fontawesome.com/7fdcb125d7.css" media="all">
 <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
