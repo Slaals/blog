@@ -1,10 +1,14 @@
 ---
 title: Angular2, a rest client interface
-description: This article is about making an Angular2 interface that manages http requests. The solutions uses a library called ng2-resource-rest by troyanskyi.
+description: This article is about making an Angular2 interface that manages http requests. The solutions uses a library called ngx-resource by troyanskyi.
 layout: post
 category: Programming
 thumbnail: /assets/posts/2017-01-12-angular2-a-rest-client-interface/thumb.png
 ---
+
+<p>
+  UPDATE 2017/07/26 : Some breaking change were pushed since I wrote this article. I updated it, but I didn't test it, feel free to comment if you find any issue. Thanks to <a href="https://github.com/genuinefafa">Facundo Donato</a> for noticing the library update.
+</p>
 
 <p>
   Today I wanted to make a REST client interface for my project. I looked first on the Internet but surprisingly I didn't find anything good enough. I'll explain what I made, but first, what is the goal of this "interface".
@@ -17,11 +21,11 @@ thumbnail: /assets/posts/2017-01-12-angular2-a-rest-client-interface/thumb.png
 
 <h2>Requirement</h2>
 <p>
-  First, I use a library that follows CRUD rules (which is not needed for this solution) and is up to date, <a href="https://github.com/troyanskiy/ng2-resource-rest">toyanskiy/ng2-resource-rest</a>
+  First, I use a library that follows CRUD rules (which is not needed for this solution) and is up to date, <a href="https://github.com/troyanskiy/ngx-resource">toyanskiy/ngx-resource</a>
 </p>
 
 {% highlight ruby %}
-npm install --save ng2-resource-rest
+npm install --save ngx-resource
 {% endhighlight %}
 
 <p>
@@ -40,15 +44,15 @@ npm install --save ng2-resource-rest
 {% highlight ts %}
 // app/shared/rest-client.ts
 
-import {Resource} from 'ng2-resource-rest';
+import {ResourceCRUD} from 'ngx-resource';
 
-export class RestClient extends Resource {
+export class RestClient<TQuery, TShort, TFull> extends ResourceCRUD<TQuery, TShort, TFull> {
 
 }
 {% endhighlight %}
 
 <p>
-  This class will be our REST interface. It extends Resource which is the ng2-resource-rest class that has access to request properties such as headers and URL.
+  This class will be our REST interface. It extends Resource which is the ngx-resource class that has access to request properties such as headers and URL.
 </p>
 
 <p>
@@ -60,7 +64,7 @@ export class RestClient extends Resource {
 import {Injectable} from '@angular/core';
 import {RequestMethod} from '@angular/http';
 
-import {ResourceAction, ResourceMethod, ResourceParams} from 'ng2-resource-rest';
+import {ResourceAction, ResourceMethod, ResourceParams} from 'ngx-resource';
 import {RestClient} from '../shared/rest-client';
 
 interface IQueryInput {
@@ -120,7 +124,7 @@ export class BookService extends RestClient {
 {% endhighlight %}
 
 <p>
-  ResourceMethod is an interface from ng2-resource-rest. The method generics are respectively request body and response body. Note that the service extends RestClient, it is mandatory.
+  ResourceMethod is an interface from ngx-resource. The method generics are respectively request body and response body. Note that the service extends RestClient, it is mandatory.
 </p>
 
 <p>
@@ -167,7 +171,7 @@ class BookComponent {
 {% endhighlight %}
 
 <p>
-  Here, I mostly copied the documentation from ng2-resource-rest <a href="https://github.com/troyanskiy/ng2-resource-rest/blob/master/README.md">github page</a>.
+  Here, I mostly copied the documentation from ngx-resource <a href="https://github.com/troyanskiy/ngx-resource/blob/master/README.md">github page</a>.
 </p>
 
 <p>
@@ -175,10 +179,10 @@ class BookComponent {
 </p>
 
 {% highlight ts %}
-export class RestClient extends Resource {
+export class RestClient<TQuery, TShort, TFull> extends ResourceCRUD<TQuery, TShort, TFull> {
 
-  getUrl(methodOptions?: any): string | Promise<string> {
-    let resPath = super.getUrl();
+  $getUrl(methodOptions?: any): string | Promise<string> {
+    let resPath = super.$getUrl();
     return 'http://myurl.com/api' + resPath;
   }
 
@@ -194,40 +198,36 @@ export class RestClient extends Resource {
 </p>
 
 {% highlight ts %}
-export class RestClient extends Resource {
-
-  getHeaders(methodOptions?: any): any {
-    let headers: any = {};
-
+export class RestClient<TQuery, TShort, TFull> extends ResourceCRUD<TQuery, TShort, TFull> {
+  $getHeaders(methodOptions?: any): any {
+    const headers: any = {};
     if (methodOptions.auth) {
       headers.Authorization = localStorage.get('token');
     }
-
     return headers;
   }
 
-  getUrl(methodOptions?: any): string | Promise<string> {
-    let resPath = super.getUrl();
+  $getUrl(methodOptions?: any): string | Promise<string> {
+    let resPath = super.$getUrl();
     return 'http://myurl.com/api' + resPath;
   }
 
-  responseInterceptor(observable: Observable<any>, request?: Request): Observable<any> {
-
+  $responseInterceptor(observable: Observable<any>, request: Request, methodOptions?: any): Observable<any> {
     return Observable.create((subscriber: Subscriber<any>) => {
-
       observable.subscribe(
         (res: Response) => {
           if (res.headers) {
-            let newToken: string = res.headers.get('Authorization');
+            const newToken: string = res.headers.get('Authorization');
             if (newToken) {
               localStorage.setItem('token', newToken);
             }
           }
-          subscriber.next((<any>res)._body ? res.json().data : null);
+          const body = (<any>res)._body;
+          subscriber.next(body ? res.json() : null);
         },
         (error: Response) => {
           // I also made a layer to parse errors
-          subscriber.error(new Error(error));
+          subscriber.error(new Error(error.statusText));
         },
         () => subscriber.complete()
       );
@@ -265,7 +265,7 @@ export class RestClient extends Resource {
 </p>
 
 {% highlight ts %}
-import {ResourceModule} from 'ng2-resource-rest';
+import {ResourceModule} from 'ngx-resource';
 
 @NgModule({
   imports: [
