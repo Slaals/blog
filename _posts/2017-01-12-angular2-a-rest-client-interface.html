@@ -11,6 +11,10 @@ thumbnail: /assets/posts/2017-01-12-angular2-a-rest-client-interface/thumb.png
 </p>
 
 <p>
+  UPDATE 2017/08/05 : I fixed some issues due to ngx-resource recent updates. Here is a Plunkr for a workable example https://plnkr.co/edit/ekfGkxPTJcQwHUlZkmZk?p=preview
+</p>
+
+<p>
   Today I wanted to make a REST client interface for my project. I looked first on the Internet but surprisingly I didn't find anything good enough. I'll explain what I made, but first, what is the goal of this "interface".
 </p>
 
@@ -44,9 +48,9 @@ npm install --save ngx-resource
 {% highlight ts %}
 // app/shared/rest-client.ts
 
-import {ResourceCRUD} from 'ngx-resource';
+import {Resource} from 'ngx-resource';
 
-export class RestClient<TQuery, TShort, TFull> extends ResourceCRUD<TQuery, TShort, TFull> {
+export class RestClient extends Resource {
 
 }
 {% endhighlight %}
@@ -89,7 +93,7 @@ interface IBook extends IBookShort {
 
 @Injectable()
 @ResourceParams({
-  url: '/books'
+  path: '/books'
 })
 export class BookService extends RestClient {
 
@@ -105,7 +109,8 @@ export class BookService extends RestClient {
   getBook: ResourceMethod<{id: any}, IBook>;
 
   @ResourceAction({
-    method: RequestMethod.Post
+    method: RequestMethod.Post,
+    auth: true
   })
   saveBook: ResourceMethod<IBook, any>;
 
@@ -179,7 +184,7 @@ class BookComponent {
 </p>
 
 {% highlight ts %}
-export class RestClient<TQuery, TShort, TFull> extends ResourceCRUD<TQuery, TShort, TFull> {
+export class RestClient extends Resource {
 
   $getUrl(methodOptions?: any): string | Promise<string> {
     let resPath = super.$getUrl();
@@ -198,7 +203,7 @@ export class RestClient<TQuery, TShort, TFull> extends ResourceCRUD<TQuery, TSho
 </p>
 
 {% highlight ts %}
-export class RestClient<TQuery, TShort, TFull> extends ResourceCRUD<TQuery, TShort, TFull> {
+export class RestClient extends Resource {
   $getHeaders(methodOptions?: any): any {
     const headers: any = {};
     if (methodOptions.auth) {
@@ -208,8 +213,9 @@ export class RestClient<TQuery, TShort, TFull> extends ResourceCRUD<TQuery, TSho
   }
 
   $getUrl(methodOptions?: any): string | Promise<string> {
-    let resPath = super.$getUrl();
-    return 'http://myurl.com/api' + resPath;
+    // Gets service path
+    let resPath = super.$getPath();
+    return 'http://myurl.com/api' + resPath;;
   }
 
   $responseInterceptor(observable: Observable<any>, request: Request, methodOptions?: any): Observable<any> {
